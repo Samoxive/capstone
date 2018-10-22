@@ -96,3 +96,4 @@ GoTo("loop")
 
 Label("terminate_loop")
 Call("print", vec!["sum"], None);
+```
