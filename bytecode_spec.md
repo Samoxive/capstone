@@ -26,7 +26,7 @@ fibonacci = fn(n) {
     } else {
         return fibonacci(n - 1) + fibonacci(n - 2);
     }
-}
+};
 ```
 
 ```rust
@@ -61,3 +61,38 @@ Call("fib_n_minus_1#__add__", vec!["fib_n_minus_2"], "fib_n_minus_1")
 PushCallResult("result")
 Return("result")
 ```
+__le__
+```
+// sum numbers from 1 to n
+n = 5;
+sum = 0;
+i = 0;
+while (i < n) {
+    a = i + 1;
+    sum = sum + a;
+}
+print(sum);
+```
+
+```rust
+PushInteger("n", 5)
+PushInteger("sum", 0)
+PushInteger("i", 0)
+
+Label("loop")
+PopObjectValue("i#__lt__", "i", "__lt__")
+Call("i#__lt__", vec!["n"], "i")
+PushCallResult("i_comp")
+Branch("i_comp", "terminate_loop", None)
+PopObjectValue("i#__add__", "i", "__add__")
+PushInteger("1", 1)
+Call("i#__add__", vec!["1"], "i")
+PushCallResult("a")
+PopObjectValue("sum#__add__", "sum", "__add__")
+Call("sum#__add__", vec!["a"], "sum")
+PushCallResult("sum")
+Pop("a") // get rid of while's local variables
+GoTo("loop")
+
+Label("terminate_loop")
+Call("print", vec!["sum"], None);
