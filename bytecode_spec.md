@@ -18,7 +18,6 @@ enum Inst {
 ```
 
 An example code would get converted to this list of instructions.
-
 ```
 fibonacci = fn(n) {
     if (n == 0 || n == 1) {
@@ -61,7 +60,7 @@ Call("fib_n_minus_1#__add__", vec!["fib_n_minus_2"], "fib_n_minus_1")
 PushCallResult("result")
 Return("result")
 ```
-__le__
+
 ```
 // sum numbers from 1 to n
 n = 5;
@@ -91,9 +90,33 @@ PushCallResult("a")
 PopObjectValue("sum#__add__", "sum", "__add__")
 Call("sum#__add__", vec!["a"], "sum")
 PushCallResult("sum")
-Pop("a") // get rid of while's local variables
 GoTo("loop")
 
 Label("terminate_loop")
 Call("print", vec!["sum"], None);
 ```
+
+```
+// x = [1, 2, 3, 4];
+for (i : x) {
+    print(i);
+}
+```
+
+```rust
+PopObjectValue("x#__iter__", "x", "__iter__")
+Call("x#__iter__", vec![], "x")
+PushCallResult("x_iterator")
+PopObjectValue("x_iterator#next", "x_iterator", "next")
+PopObjectValue("x_iterator#hasNext", "x_iterator", "hasNext")
+
+Label("loop")
+Call("x_iterator#hasNext", vec![], "x_iterator")
+PushCallResult("x_iterator_hasNext_result")
+Branch("x_iterator_hasNext_result", None, "terminate_loop")
+Call("x_iterator#next", vec![], "x_iterator")
+PushCallResult("i")
+Call("print", vec!["i"], None)
+GoTo("loop")
+
+Label("terminate_loop")
