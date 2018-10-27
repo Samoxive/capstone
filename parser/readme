@@ -1,0 +1,25 @@
+About parser:
+
+//28 OCT
+
+Attached IEEE file
+I will check nom(2418) since it's mentioned in a litrev file (check attachment)
+Other options are LALRPOP(765), pest(1054), combine(529), rust-peg (501), oak (109).
+
+https://github.com/dtolnay/syn/issues/6
+Seems LALRPOP is a bit slower than nom
+
+https://www.reddit.com/r/rust/comments/74acpl/is_lalrpop_suitable_for_a_beginner_who_wants_to/
+On the other hand nom is as he said, better for binary files more than PL files.
+
+pest is the simplest one LALRPOP is more focused on PL and nom is the general purpose, after checking all 3,
+I will decide what to use. LALRPOP seemed nice at first glance.
+
+https://www.reddit.com/r/rust/comments/3mhi4e/safe_and_fast_parsers_with_nom_and_rust/
+"@geaal nom - 3 years ago
+parsing programming languages with parser combinators can be a bit hard sometimes, moreover when indentation is meaningful. 
+But I plan to add more parsing backends for that.
+"
+http://dev.unhandledexpression.com/slides/strangeloop-2015/
+
+//
