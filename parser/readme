@@ -22,4 +22,11 @@ But I plan to add more parsing backends for that.
 "
 http://dev.unhandledexpression.com/slides/strangeloop-2015/
 
-//
+//4 NOV
+Lalrpop:
+https://dfockler.github.io/2016/09/15/lalrpop.html
+https://github.com/17cupsofcoffee/ein/tree/master/ein_syntax/src
+Nom:
+https://github.com/gobanos/advent-of-code-2017/blob/master/day7_parser/src/lib.rs
+Pom:
+https://github.com/J-F-Liu/pom
