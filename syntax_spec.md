@@ -8,7 +8,7 @@ Variables
 ```
 foo = 3;
 bar = 'hello';
-pi = 3.14
+pi = 3.14;
 isLanguage = true;
 isDelicious = (pi == 3.14 && isLanguage)
 // || for `or` operations
