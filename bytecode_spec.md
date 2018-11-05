@@ -5,6 +5,7 @@ enum Inst {
     PushInt(name: String, value: i32),
     PushFloat(name: String, value: f32),
     PushBoolean(name: String, value: bool),
+    PushFunction(name: String, instructions: Vec<Inst>),
     PopObjectValue(pop_to_name: String, object_name: String, key_name: String),
     PushObjectValue(object_name: String, key_name: String, value_name: String),
     Call(name: String, arguments: Vec<String>, this: Option<String>),
@@ -16,6 +17,18 @@ enum Inst {
     Return(name: String)
 }
 ```
+
+```rust
+type InstBlock = Vec<Inst>;
+type Stack = Arc<HashMap<String, Value>>; // reference counting pointer to a hash map
+
+struct ExecutionContext {
+    program_counter: usize;
+    program: InstBlock;
+    stack: Stack;
+    parent: Stack;
+    call_result: Option<Value>;
+}
 
 An example code would get converted to this list of instructions.
 ```
