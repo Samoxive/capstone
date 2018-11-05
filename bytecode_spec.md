@@ -22,13 +22,29 @@ enum Inst {
 type InstBlock = Vec<Inst>;
 type Stack = Arc<HashMap<String, Value>>; // reference counting pointer to a hash map
 
+enum Value {
+    Boolean(bool),
+    Integer(i64),
+    Float(f64),
+    String(String),
+    List(Vec<Value>),
+    Object(HashMap<String, Value>)
+}
+
 struct ExecutionContext {
     program_counter: usize;
+    label_points: HashMap<String, usize>;
     program: InstBlock;
     stack: Stack;
-    parent: Stack;
+    parent_context: &ExecutionContext;
     call_result: Option<Value>;
 }
+
+```
+
+Variables shall be reference counted, when an execution context is done, it should clean up its stack.
+
+Contexes can be stored in event loops or in other contexes, when a function call occurs, it's the callee's responsibility to revive the calling function, in which case callee can place a call result value into caller's context and resume it.
 
 An example code would get converted to this list of instructions.
 ```

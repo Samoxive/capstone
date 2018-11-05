@@ -86,8 +86,32 @@ myObject = {
 };
 
 myObject.uno = 2;
+myObject['foo'] = 'baz';
 print(myObject.foo);
 myObject.printFoo();
 ```
 
 Calling an object's property will set `this` to the object.
+
+Variable scopes
+---------------
+
+When a variable is declared, it is visible to all child functions.
+
+```
+sum = fn(list) {
+    total = 0;
+    acc = fn(element) {
+        total += element;
+    };
+    for (element : list) {
+        acc(element);
+    }
+
+    return total;
+}
+```
+
+When function `acc` is created, it has access to parent scope, this means it can access and modify `total` in its parent's stack.
+
+However, variables declared in a scope are not visible to parent scope and they get destroyed when they get out of scope. 
