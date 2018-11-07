@@ -28,7 +28,8 @@ enum Value {
     Float(f64),
     String(String),
     List(Vec<Value>),
-    Object(HashMap<String, Value>)
+    Object(HashMap<String, Value>),
+    Function
 }
 
 struct ExecutionContext {
