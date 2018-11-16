@@ -2,10 +2,13 @@ Unnamed language is a stack machine, it has a stack like python, it is a hashmap
 
 ```rust
 enum Inst {
+    Alloc(name: String)
     PushInt(name: String, value: i32),
     PushFloat(name: String, value: f32),
     PushBoolean(name: String, value: bool),
     PushFunction(name: String, instructions: Vec<Inst>),
+    PushList (name: String),
+    PushObject(name: String),
     PopObjectValue(pop_to_name: String, object_name: String, key_name: String),
     PushObjectValue(object_name: String, key_name: String, value_name: String),
     Call(name: String, arguments: Vec<String>, this: Option<String>),
@@ -22,14 +25,16 @@ enum Inst {
 type InstBlock = Vec<Inst>;
 type Stack = Arc<HashMap<String, Value>>; // reference counting pointer to a hash map
 
-enum Value {
+pub enum Value {
     Boolean(bool),
     Integer(i64),
     Float(f64),
     String(String),
     List(Vec<Value>),
-    Object(HashMap<String, Value>),
-    Function
+    Object(HashMap<String, SyncValue>),
+    NativeFunction(Arc<NativeFunctionData>),
+    InterpretedFunction(Box<InterpretedFunctionData>),
+    Nothing,
 }
 
 struct ExecutionContext {
@@ -59,15 +64,22 @@ fibonacci = fn(n) {
 ```
 
 ```rust
+Alloc("0")
 PushInt("0", 0)
+Alloc("1")
 PushInt("1", 1)
+Alloc("n#__eq__")
 PopObjectValue("n#__eq__", "n", "__eq__")
 Call("n#__eq__", vec!["0"], "n")
+Alloc("eq_0")
 PushCallResult("eq_0")
 Call("n#__eq__", vec!["1"], "n")
+Alloc("eq_1")
 PushCallResult("eq_1")
-PopObjectValue("eq_0#__or__", "eq_0", "__or__")
+Alloc("eq_0#__or__")
+PopObjectValue("", "eq_0", "__or__")
 Call("eq_0#__or__", vec!["eq_1"], "eq_0")
+Alloc("if_0_result")
 PushCallResult("if_0_result")
 Branch("if_0_result", "terminate", "recurse")
 
@@ -76,26 +88,35 @@ Return("n")
 
 Label("recurse")
 PushInt("2", 2)
+PushCallResult("n#__sub__")
 PopObjectValue("n#__sub__", "n", "__sub__")
 Call("n#__sub__", vec!["1"], "n")
+Alloc("n_minus_1")
 PushCallResult("n_minus_1")
 Call("n#__sub__", vec!["2"], "n")
+Alloc("n_minus_2")
 PushCallResult("n_minus_2")
 Call("fibonacci", vec!["n_minus_1"], None)
+Alloc("fib_n_minus_1")
 PushCallResult("fib_n_minus_1")
 Call("fibonacci", vec!["n_minus_2"], None)
+Alloc("fib_n_minus_2")
 PushCallResult("fib_n_minus_2")
+Alloc("fib_n_minus_1#__add__")
 PopObjectValue("fib_n_minus_1#__add__", "fib_n_minus_1", "__add__")
 Call("fib_n_minus_1#__add__", vec!["fib_n_minus_2"], "fib_n_minus_1")
+Alloc("result")
 PushCallResult("result")
 Return("result")
 ```
 
 ```
 // sum numbers from 1 to n
-n = 5;
+let n = 5;
+let sum;
 sum = 0;
-i = 0;
+let i = 0;
+let a;
 while (i < n) {
     a = i + 1;
     sum = sum + a;
@@ -104,10 +125,19 @@ print(sum);
 ```
 
 ```rust
+Alloc("n")
 PushInteger("n", 5)
+Alloc("sum")
 PushInteger("sum", 0)
+Alloc("i")
 PushInteger("i", 0)
+Alloc("a")
 
+Alloc("i#__lt__")
+Alloc("i_comp")
+Alloc("i#__add__")
+Alloc("1")
+Alloc("sum#__add__")
 Label("loop")
 PopObjectValue("i#__lt__", "i", "__lt__")
 Call("i#__lt__", vec!["n"], "i")
@@ -116,7 +146,6 @@ Branch("i_comp", "terminate_loop", None)
 PopObjectValue("i#__add__", "i", "__add__")
 PushInteger("1", 1)
 Call("i#__add__", vec!["1"], "i")
-PushCallResult("a")
 PopObjectValue("sum#__add__", "sum", "__add__")
 Call("sum#__add__", vec!["a"], "sum")
 PushCallResult("sum")
@@ -128,12 +157,14 @@ Call("print", vec!["sum"], None);
 
 ```
 // x = [1, 2, 3, 4];
+let i;
 for (i : x) {
     print(i);
 }
 ```
 
 ```rust
+Alloc("i")
 PopObjectValue("x#__iter__", "x", "__iter__")
 Call("x#__iter__", vec![], "x")
 PushCallResult("x_iterator")
@@ -150,3 +181,4 @@ Call("print", vec!["i"], None)
 GoTo("loop")
 
 Label("terminate_loop")
+```
