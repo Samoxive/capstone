@@ -13,7 +13,6 @@ enum Inst {
     PushObjectValue(object_name: String, key_name: String, value_name: String),
     Call(name: String, arguments: Vec<String>, this: Option<String>),
     PushCallResult(name: String),
-    Pop(name: String),
     Label(name: String),
     GoTo(name: String), // here be dragons
     Branch(name: String, true_label: Option<String>, false_label: Option<String>),
